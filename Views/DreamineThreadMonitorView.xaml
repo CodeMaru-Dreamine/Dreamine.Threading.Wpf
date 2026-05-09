@@ -1,0 +1,163 @@
+﻿<UserControl x:Class="Dreamine.Threading.Wpf.Views.DreamineThreadMonitorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:Dreamine.Threading.Wpf.Converters"
+             MinWidth="600"
+             MinHeight="300">
+    <UserControl.Resources>
+        <converters:ThreadStatusBrushConverter x:Key="ThreadStatusBrushConverter" />
+        <converters:ThreadPriorityTextConverter x:Key="ThreadPriorityTextConverter" />
+    </UserControl.Resources>
+
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="120" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="Dreamine Thread Monitor"
+                   FontSize="16"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,8" />
+
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding Threads}"
+                  SelectedItem="{Binding SelectedThread, Mode=TwoWay}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="Horizontal">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name"
+                                    Binding="{Binding Name}"
+                                    Width="180" />
+
+                <DataGridTemplateColumn Header="Status"
+                                        Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="10"
+                                         Height="10"
+                                         Margin="0,0,6,0"
+                                         Fill="{Binding Status, Converter={StaticResource ThreadStatusBrushConverter}}" />
+                                <TextBlock Text="{Binding Status}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Priority"
+                                    Binding="{Binding Priority, Converter={StaticResource ThreadPriorityTextConverter}}"
+                                    Width="90" />
+
+                <DataGridTextColumn Header="Interval"
+                                    Binding="{Binding IntervalMs}"
+                                    Width="80" />
+
+                <DataGridTextColumn Header="Core"
+                                    Binding="{Binding CoreIndex}"
+                                    Width="70" />
+
+                <DataGridCheckBoxColumn Header="Affinity"
+                                        Binding="{Binding UseAffinity, Mode=OneWay}"
+                                        Width="80" />
+
+                <DataGridTextColumn Header="Jobs"
+                                    Binding="{Binding JobCount}"
+                                    Width="70" />
+
+                <DataGridTextColumn Header="Cycles"
+                                    Binding="{Binding CycleCount}"
+                                    Width="100" />
+
+                <DataGridTextColumn Header="Last Error"
+                                    Binding="{Binding LastErrorMessage}"
+                                    Width="*" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Border Grid.Row="2"
+                Margin="0,8,0,0"
+                Padding="6"
+                BorderBrush="#CCCCCC"
+                BorderThickness="1"
+                Background="#F8F8F8">
+            <DockPanel LastChildFill="False">
+                <StackPanel Orientation="Horizontal"
+                            DockPanel.Dock="Left">
+                    <TextBlock Text="Selected:"
+                               VerticalAlignment="Center"
+                               FontWeight="SemiBold"
+                               Margin="0,0,6,0" />
+
+                    <Button Content="Start"
+                            Width="70"
+                            Margin="2"
+                            Command="{Binding StartCommand}" />
+
+                    <Button Content="Stop"
+                            Width="70"
+                            Margin="2"
+                            Command="{Binding StopCommand}" />
+
+                    <Button Content="Pause"
+                            Width="70"
+                            Margin="2"
+                            Command="{Binding PauseCommand}" />
+
+                    <Button Content="Resume"
+                            Width="70"
+                            Margin="2"
+                            Command="{Binding ResumeCommand}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal"
+                            DockPanel.Dock="Right">
+                    <TextBlock Text="All:"
+                               VerticalAlignment="Center"
+                               FontWeight="SemiBold"
+                               Margin="20,0,6,0" />
+
+                    <Button Content="Start All"
+                            Width="80"
+                            Margin="2"
+                            Command="{Binding StartAllCommand}" />
+
+                    <Button Content="Stop All"
+                            Width="80"
+                            Margin="2"
+                            Command="{Binding StopAllCommand}" />
+
+                    <Button Content="Pause All"
+                            Width="80"
+                            Margin="2"
+                            Command="{Binding PauseAllCommand}" />
+
+                    <Button Content="Resume All"
+                            Width="85"
+                            Margin="2"
+                            Command="{Binding ResumeAllCommand}" />
+
+                    <Button Content="Refresh"
+                            Width="80"
+                            Margin="12,2,2,2"
+                            Command="{Binding RefreshCommand}" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <TextBox Grid.Row="3"
+                 Text="{Binding SelectedDetailText, Mode=OneWay}"
+                 Margin="0,8,0,0"
+                 IsReadOnly="True"
+                 TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Auto"
+                 HorizontalScrollBarVisibility="Auto" />
+    </Grid>
+</UserControl>
