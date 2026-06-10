@@ -44,10 +44,12 @@ public static class DreamineThreadingWpfRegistration
     {
         DMContainer.RegisterSingleton<WpfThreadUiDispatcher>(
             new WpfThreadUiDispatcher());
+        DMContainer.RegisterSingleton<IThreadUiDispatcher>(
+            DMContainer.Resolve<WpfThreadUiDispatcher>());
 
         DMContainer.Register<DreamineThreadMonitorViewModel>(() =>
             new DreamineThreadMonitorViewModel(
                 DMContainer.Resolve<Dreamine.Threading.Interfaces.IDreamineThreadManager>(),
-                DMContainer.Resolve<WpfThreadUiDispatcher>()));
+                DMContainer.Resolve<IThreadUiDispatcher>()));
     }
 }

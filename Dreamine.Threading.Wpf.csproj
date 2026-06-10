@@ -26,6 +26,7 @@
 		<ProjectReference Include="..\Core\Dreamine.MVVM.Core.csproj" />
 		<ProjectReference Include="..\Threading.Windows\Dreamine.Threading.Windows.csproj" />
 		<ProjectReference Include="..\Threading\Dreamine.Threading.csproj" />
+		<ProjectReference Include="..\ViewModels\Dreamine.MVVM.ViewModels.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

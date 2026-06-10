@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Dreamine.MVVM.ViewModels;
 using Dreamine.Threading.Interfaces;
 using Dreamine.Threading.Models;
 using Dreamine.Threading.Wpf.Services;
@@ -34,7 +35,7 @@ public sealed class DreamineThreadMonitorViewModel : INotifyPropertyChanged, IDi
     public static readonly TimeSpan DefaultRefreshInterval = TimeSpan.FromMilliseconds(500);
 
     private readonly IDreamineThreadManager _threadManager;
-    private readonly WpfThreadUiDispatcher _dispatcher;
+    private readonly IThreadUiDispatcher _dispatcher;
     private readonly Timer _refreshTimer;
     private readonly BatchedDispatcher<IReadOnlyList<DreamineThreadInfo>> _uiBatch;
     private readonly Dictionary<string, ThreadInfoRow> _rowsByName = new(StringComparer.Ordinal);
@@ -42,15 +43,15 @@ public sealed class DreamineThreadMonitorViewModel : INotifyPropertyChanged, IDi
     private ThreadInfoRow? _selectedThread;
     private int _disposed;
 
-    private readonly DelegateCommand _startCommand;
-    private readonly DelegateCommand _stopCommand;
-    private readonly DelegateCommand _pauseCommand;
-    private readonly DelegateCommand _resumeCommand;
-    private readonly DelegateCommand _refreshCommand;
-    private readonly DelegateCommand _startAllCommand;
-    private readonly DelegateCommand _stopAllCommand;
-    private readonly DelegateCommand _pauseAllCommand;
-    private readonly DelegateCommand _resumeAllCommand;
+    private readonly RelayCommand _startCommand;
+    private readonly RelayCommand _stopCommand;
+    private readonly RelayCommand _pauseCommand;
+    private readonly RelayCommand _resumeCommand;
+    private readonly RelayCommand _refreshCommand;
+    private readonly RelayCommand _startAllCommand;
+    private readonly RelayCommand _stopAllCommand;
+    private readonly RelayCommand _pauseAllCommand;
+    private readonly RelayCommand _resumeAllCommand;
 
     /// <inheritdoc />
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -142,7 +143,7 @@ public sealed class DreamineThreadMonitorViewModel : INotifyPropertyChanged, IDi
     /// <param name="dispatcher">The UI dispatcher.</param>
     public DreamineThreadMonitorViewModel(
         IDreamineThreadManager threadManager,
-        WpfThreadUiDispatcher dispatcher)
+        IThreadUiDispatcher dispatcher)
         : this(threadManager, dispatcher, DefaultRefreshInterval)
     {
     }
@@ -155,7 +156,7 @@ public sealed class DreamineThreadMonitorViewModel : INotifyPropertyChanged, IDi
     /// <param name="refreshInterval">Polling interval. Must be positive.</param>
     public DreamineThreadMonitorViewModel(
         IDreamineThreadManager threadManager,
-        WpfThreadUiDispatcher dispatcher,
+        IThreadUiDispatcher dispatcher,
         TimeSpan refreshInterval)
     {
         _threadManager = threadManager ?? throw new ArgumentNullException(nameof(threadManager));
@@ -171,15 +172,15 @@ public sealed class DreamineThreadMonitorViewModel : INotifyPropertyChanged, IDi
             ApplySnapshotsOnUiThread,
             DispatcherPriority.Background);
 
-        _startCommand = new DelegateCommand(StartSelectedThread, HasSelectedThread);
-        _stopCommand = new DelegateCommand(StopSelectedThread, HasSelectedThread);
-        _pauseCommand = new DelegateCommand(PauseSelectedThread, HasSelectedThread);
-        _resumeCommand = new DelegateCommand(ResumeSelectedThread, HasSelectedThread);
-        _refreshCommand = new DelegateCommand(Refresh);
-        _startAllCommand = new DelegateCommand(StartAllThreads);
-        _stopAllCommand = new DelegateCommand(StopAllThreads);
-        _pauseAllCommand = new DelegateCommand(PauseAllThreads);
-        _resumeAllCommand = new DelegateCommand(ResumeAllThreads);
+        _startCommand = new RelayCommand(StartSelectedThread, HasSelectedThread);
+        _stopCommand = new RelayCommand(StopSelectedThread, HasSelectedThread);
+        _pauseCommand = new RelayCommand(PauseSelectedThread, HasSelectedThread);
+        _resumeCommand = new RelayCommand(ResumeSelectedThread, HasSelectedThread);
+        _refreshCommand = new RelayCommand(Refresh);
+        _startAllCommand = new RelayCommand(StartAllThreads);
+        _stopAllCommand = new RelayCommand(StopAllThreads);
+        _pauseAllCommand = new RelayCommand(PauseAllThreads);
+        _resumeAllCommand = new RelayCommand(ResumeAllThreads);
 
         // Initial sync refresh so the grid is populated before the timer fires.
         Refresh();
@@ -302,9 +303,10 @@ public sealed class DreamineThreadMonitorViewModel : INotifyPropertyChanged, IDi
             return;
         }
 
-        // Wait for any in-flight timer callback to complete so that no new
-        // batch is enqueued after disposal. Bounded wait to avoid hanging
-        // application shutdown.
+        // Wait for an in-flight timer callback when the runtime can signal it.
+        // Dispose can return false when the timer is already disposed or no
+        // callback can be signaled; in that case disposal remains best-effort.
+        // The wait is bounded so UI shutdown cannot hang indefinitely.
         using var disposed = new ManualResetEvent(false);
         try
         {
@@ -330,12 +332,12 @@ public sealed class DreamineThreadMonitorViewModel : INotifyPropertyChanged, IDi
         Refresh();
     }
 
-    private void StopSelectedThread()
+    private async void StopSelectedThread()
     {
         var name = SelectedThread?.Name;
         if (name is null) return;
 
-        _threadManager.Stop(name);
+        await _threadManager.StopAsync(name);
         Refresh();
     }
 
@@ -363,9 +365,9 @@ public sealed class DreamineThreadMonitorViewModel : INotifyPropertyChanged, IDi
         Refresh();
     }
 
-    private void StopAllThreads()
+    private async void StopAllThreads()
     {
-        _threadManager.StopAll();
+        await _threadManager.StopAllAsync();
         Refresh();
     }
 

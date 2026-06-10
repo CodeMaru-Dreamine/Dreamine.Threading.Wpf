@@ -7,7 +7,7 @@ namespace Dreamine.Threading.Wpf.Services;
 /// <summary>
 /// Provides UI thread dispatching for Dreamine threading WPF components.
 /// </summary>
-public sealed class WpfThreadUiDispatcher
+public sealed class WpfThreadUiDispatcher : IThreadUiDispatcher
 {
     private readonly Dispatcher _dispatcher;
 
