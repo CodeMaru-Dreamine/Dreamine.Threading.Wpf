@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Dreamine.MVVM.ViewModels;
@@ -44,12 +45,12 @@ public sealed class DreamineThreadMonitorViewModel : INotifyPropertyChanged, IDi
     private int _disposed;
 
     private readonly RelayCommand _startCommand;
-    private readonly RelayCommand _stopCommand;
+    private readonly AsyncRelayCommand _stopCommand;
     private readonly RelayCommand _pauseCommand;
     private readonly RelayCommand _resumeCommand;
     private readonly RelayCommand _refreshCommand;
     private readonly RelayCommand _startAllCommand;
-    private readonly RelayCommand _stopAllCommand;
+    private readonly AsyncRelayCommand _stopAllCommand;
     private readonly RelayCommand _pauseAllCommand;
     private readonly RelayCommand _resumeAllCommand;
 
@@ -173,12 +174,12 @@ public sealed class DreamineThreadMonitorViewModel : INotifyPropertyChanged, IDi
             DispatcherPriority.Background);
 
         _startCommand = new RelayCommand(StartSelectedThread, HasSelectedThread);
-        _stopCommand = new RelayCommand(StopSelectedThread, HasSelectedThread);
+        _stopCommand = new AsyncRelayCommand(StopSelectedThread, HasSelectedThread);
         _pauseCommand = new RelayCommand(PauseSelectedThread, HasSelectedThread);
         _resumeCommand = new RelayCommand(ResumeSelectedThread, HasSelectedThread);
         _refreshCommand = new RelayCommand(Refresh);
         _startAllCommand = new RelayCommand(StartAllThreads);
-        _stopAllCommand = new RelayCommand(StopAllThreads);
+        _stopAllCommand = new AsyncRelayCommand(StopAllThreads);
         _pauseAllCommand = new RelayCommand(PauseAllThreads);
         _resumeAllCommand = new RelayCommand(ResumeAllThreads);
 
@@ -332,12 +333,12 @@ public sealed class DreamineThreadMonitorViewModel : INotifyPropertyChanged, IDi
         Refresh();
     }
 
-    private async void StopSelectedThread()
+    private async Task StopSelectedThread()
     {
         var name = SelectedThread?.Name;
         if (name is null) return;
 
-        await _threadManager.StopAsync(name);
+        await _threadManager.StopAsync(name).ConfigureAwait(true);
         Refresh();
     }
 
@@ -365,9 +366,9 @@ public sealed class DreamineThreadMonitorViewModel : INotifyPropertyChanged, IDi
         Refresh();
     }
 
-    private async void StopAllThreads()
+    private async Task StopAllThreads()
     {
-        await _threadManager.StopAllAsync();
+        await _threadManager.StopAllAsync().ConfigureAwait(true);
         Refresh();
     }
 
