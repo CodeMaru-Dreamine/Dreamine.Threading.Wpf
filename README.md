@@ -1,5 +1,11 @@
 # Dreamine.Threading.Wpf
 
+[![CI](https://github.com/CodeMaru-Dreamine/Dreamine.Threading.Wpf/actions/workflows/ci.yml/badge.svg)](https://github.com/CodeMaru-Dreamine/Dreamine.Threading.Wpf/actions/workflows/ci.yml) [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=CodeMaru-Dreamine_Dreamine.Threading.Wpf&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=CodeMaru-Dreamine_Dreamine.Threading.Wpf) [![Security](https://sonarcloud.io/api/project_badges/measure?project=CodeMaru-Dreamine_Dreamine.Threading.Wpf&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=CodeMaru-Dreamine_Dreamine.Threading.Wpf) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=CodeMaru-Dreamine_Dreamine.Threading.Wpf&metric=coverage)](https://sonarcloud.io/summary/new_code?id=CodeMaru-Dreamine_Dreamine.Threading.Wpf)
+
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) ![.NET](https://img.shields.io/badge/.NET-8-512BD4) ![WPF](https://img.shields.io/badge/WPF-Windows-0078D4) [![NuGet](https://img.shields.io/nuget/v/Dreamine.Threading.Wpf.svg)](https://www.nuget.org/packages/Dreamine.Threading.Wpf/) [![Downloads](https://img.shields.io/nuget/dt/Dreamine.Threading.Wpf.svg)](https://www.nuget.org/packages/Dreamine.Threading.Wpf/)
+
+[![Docs](https://img.shields.io/badge/📘_Docs-dreamine.kr-2496ED)](https://dreamine.kr/) [![Guide](https://img.shields.io/badge/📖_Guide-dreamine.kr-2496ED)](https://dreamine.kr/) [![Playground](https://img.shields.io/badge/🎮_Playground-dreamine.kr-8A2BE2)](https://dreamine.kr/) [![Book](https://img.shields.io/badge/📖_Book-Practical_MVVM_Architecture-black)](https://dreamine.kr/)
+
 **Dreamine.Threading.Wpf** provides WPF monitoring UI components for Dreamine.Threading.
 
 This package displays worker thread status, priority, interval, assigned CPU core, affinity state, job count, cycle count, and fault state inside WPF applications.

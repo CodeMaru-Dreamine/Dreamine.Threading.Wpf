@@ -1,5 +1,11 @@
 # Dreamine.Threading.Wpf
 
+[![CI](https://github.com/CodeMaru-Dreamine/Dreamine.Threading.Wpf/actions/workflows/ci.yml/badge.svg)](https://github.com/CodeMaru-Dreamine/Dreamine.Threading.Wpf/actions/workflows/ci.yml) [![품질 게이트](https://sonarcloud.io/api/project_badges/measure?project=CodeMaru-Dreamine_Dreamine.Threading.Wpf&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=CodeMaru-Dreamine_Dreamine.Threading.Wpf) [![보안](https://sonarcloud.io/api/project_badges/measure?project=CodeMaru-Dreamine_Dreamine.Threading.Wpf&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=CodeMaru-Dreamine_Dreamine.Threading.Wpf) [![커버리지](https://sonarcloud.io/api/project_badges/measure?project=CodeMaru-Dreamine_Dreamine.Threading.Wpf&metric=coverage)](https://sonarcloud.io/summary/new_code?id=CodeMaru-Dreamine_Dreamine.Threading.Wpf)
+
+[![라이선스](https://img.shields.io/badge/라이선스-MIT-blue.svg)](LICENSE) ![.NET](https://img.shields.io/badge/.NET-8-512BD4) ![WPF](https://img.shields.io/badge/WPF-Windows-0078D4) [![NuGet](https://img.shields.io/nuget/v/Dreamine.Threading.Wpf.svg)](https://www.nuget.org/packages/Dreamine.Threading.Wpf/) [![다운로드](https://img.shields.io/nuget/dt/Dreamine.Threading.Wpf.svg)](https://www.nuget.org/packages/Dreamine.Threading.Wpf/)
+
+[![문서](https://img.shields.io/badge/📘_문서-dreamine.kr-2496ED)](https://dreamine.kr/) [![가이드](https://img.shields.io/badge/📖_가이드-dreamine.kr-2496ED)](https://dreamine.kr/) [![플레이그라운드](https://img.shields.io/badge/🎮_플레이그라운드-dreamine.kr-8A2BE2)](https://dreamine.kr/) [![도서](https://img.shields.io/badge/📖_도서-실전_MVVM_아키텍처-black)](https://dreamine.kr/)
+
 **Dreamine.Threading.Wpf**는 Dreamine.Threading을 위한 WPF 모니터링 UI 패키지입니다.
 
 이 패키지는 WPF 애플리케이션에서 Worker Thread 상태, Priority, Interval, 할당된 CPU Core, Affinity 상태, Job 수, Cycle Count, Fault 상태 등을 표시합니다.
