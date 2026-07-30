@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  SONAR_PROJECT_KEY: CodeMaru-Dreamine_Dreamine.Threading.Wpf
+  SONAR_ORGANIZATION: codemaru-dreamine
+  SONAR_PROJECT_VERSION: 1.0.1
+  SONAR_SCANNER_VERSION: 11.2.1
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+jobs:
+  build-test-analyze:
+    runs-on: windows-2025
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          dotnet-version: 8.0.x
+      - name: Install analysis tools
+        if: env.SONAR_TOKEN != ''
+        run: |
+          dotnet tool install --global dotnet-sonarscanner --version $env:SONAR_SCANNER_VERSION
+          dotnet tool install --global dotnet-coverage
+      - name: Align SonarCloud project
+        if: env.SONAR_TOKEN != ''
+        shell: pwsh
+        run: |
+          $headers = @{ Authorization = "Bearer $env:SONAR_TOKEN" }
+          $basic = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("$($env:SONAR_TOKEN):"))
+          try {
+            Invoke-RestMethod -Method Post -Uri 'https://sonarcloud.io/api/autoscan/activation' -Headers @{ Authorization = "Basic $basic" } -ContentType 'application/x-www-form-urlencoded' -Body @{ projectKey = $env:SONAR_PROJECT_KEY; enable = 'false' } | Out-Null
+            $gates = Invoke-RestMethod -Method Get -Uri "https://sonarcloud.io/api/qualitygates/list?organization=$($env:SONAR_ORGANIZATION)" -Headers $headers
+            $gateId = $gates.default
+            if ($null -eq $gateId) {
+              $gateId = ($gates.qualitygates | Where-Object name -eq 'Sonar way' | Select-Object -First 1).id
+            }
+            if ($null -ne $gateId) {
+              Invoke-RestMethod -Method Post -Uri 'https://sonarcloud.io/api/qualitygates/select' -Headers $headers -ContentType 'application/x-www-form-urlencoded' -Body @{ organization = $env:SONAR_ORGANIZATION; projectKey = $env:SONAR_PROJECT_KEY; gateId = $gateId } | Out-Null
+            }
+            Invoke-RestMethod -Method Post -Uri 'https://sonarcloud.io/api/new_code_periods/set' -Headers $headers -ContentType 'application/x-www-form-urlencoded' -Body @{ project = $env:SONAR_PROJECT_KEY; type = 'NUMBER_OF_DAYS'; value = '30' } | Out-Null
+          } catch { Write-Warning $_ }
+      - name: Restore
+        run: dotnet restore tests/Dreamine.Threading.Wpf.Tests/Dreamine.Threading.Wpf.Tests.csproj
+      - name: Begin Sonar analysis
+        if: env.SONAR_TOKEN != ''
+        run: >
+          dotnet sonarscanner begin
+          /k:"$env:SONAR_PROJECT_KEY"
+          /o:"$env:SONAR_ORGANIZATION"
+          /v:"$env:SONAR_PROJECT_VERSION"
+          /d:sonar.token="$env:SONAR_TOKEN"
+          /d:sonar.cs.vscoveragexml.reportsPaths="$env:RUNNER_TEMP\TestResults\coverage.xml"
+          /d:sonar.cs.vstest.reportsPaths="$env:RUNNER_TEMP\TestResults\**\*.trx"
+          /d:sonar.exclusions="**/bin/**,**/obj/**,**/TestResults/**"
+          /d:sonar.coverage.exclusions="**/tests/**,**/*.xaml.cs,**/Registration/**"
+          /d:sonar.cpd.exclusions="**/tests/**"
+      - name: Build and test
+        shell: pwsh
+        run: |
+          $project = 'tests/Dreamine.Threading.Wpf.Tests/Dreamine.Threading.Wpf.Tests.csproj'
+          if ($env:SONAR_TOKEN -ne '') {
+            dotnet-coverage collect "dotnet test $project --no-restore --configuration Release --results-directory $env:RUNNER_TEMP\TestResults --logger `"trx;LogFileName=tests.trx`"" -f xml -o "$env:RUNNER_TEMP\TestResults\coverage.xml"
+          } else {
+            dotnet test $project --no-restore --configuration Release
+          }
+      - name: Pack
+        run: dotnet pack Dreamine.Threading.Wpf.csproj --no-restore --configuration Release --output "${{ runner.temp }}\packages"
+      - name: End Sonar analysis
+        if: success() && env.SONAR_TOKEN != ''
+        run: dotnet sonarscanner end /d:sonar.token="$env:SONAR_TOKEN"

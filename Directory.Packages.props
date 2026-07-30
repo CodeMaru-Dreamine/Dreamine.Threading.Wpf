@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Dreamine.MVVM.Core" Version="1.0.13" />
+    <PackageVersion Include="Dreamine.Threading.Windows" Version="1.0.1" />
+    <PackageVersion Include="Dreamine.Threading" Version="1.0.1" />
+    <PackageVersion Include="Dreamine.MVVM.ViewModels" Version="1.0.5" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.1" />
+  </ItemGroup>
+</Project>

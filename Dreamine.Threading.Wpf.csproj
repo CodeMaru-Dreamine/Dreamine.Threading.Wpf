@@ -23,10 +23,17 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Core\Dreamine.MVVM.Core.csproj" />
-		<ProjectReference Include="..\Threading.Windows\Dreamine.Threading.Windows.csproj" />
-		<ProjectReference Include="..\Threading\Dreamine.Threading.csproj" />
-		<ProjectReference Include="..\ViewModels\Dreamine.MVVM.ViewModels.csproj" />
+		<PackageReference Include="Dreamine.MVVM.Core" />
+		<PackageReference Include="Dreamine.Threading.Windows" />
+		<PackageReference Include="Dreamine.Threading" />
+		<PackageReference Include="Dreamine.MVVM.ViewModels" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="tests\**" />
+		<EmbeddedResource Remove="tests\**" />
+		<None Remove="tests\**" />
+		<Page Remove="tests\**" />
 	</ItemGroup>
 
 	<ItemGroup>
