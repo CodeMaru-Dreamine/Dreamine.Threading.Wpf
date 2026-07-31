@@ -32,6 +32,8 @@ public sealed class ConverterAndOptionsTests
     [InlineData(DreamineThreadStatus.Running, "ForestGreen")]
     [InlineData(DreamineThreadStatus.Paused, "DarkOrange")]
     [InlineData(DreamineThreadStatus.Faulted, "Crimson")]
+    [InlineData(DreamineThreadStatus.Stopping, "OrangeRed")]
+    [InlineData(DreamineThreadStatus.Disposed, "DimGray")]
     [InlineData(DreamineThreadStatus.Stopped, "Gray")]
     public void StatusConverterReturnsExpectedBrush(DreamineThreadStatus status, string expected)
     {
@@ -48,6 +50,9 @@ public sealed class ConverterAndOptionsTests
     {
         var converter = new ThreadStatusBrushConverter();
         Assert.Same(Brushes.Gray, converter.Convert("unknown", typeof(Brush), null!, CultureInfo.InvariantCulture));
+        Assert.Same(
+            Brushes.SteelBlue,
+            converter.Convert((DreamineThreadStatus)int.MaxValue, typeof(Brush), null!, CultureInfo.InvariantCulture));
     }
 
     [Fact]
