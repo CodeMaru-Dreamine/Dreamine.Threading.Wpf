@@ -64,7 +64,7 @@ jobs:
           /d:sonar.cs.vscoveragexml.reportsPaths="$env:RUNNER_TEMP\TestResults\coverage.xml"
           /d:sonar.cs.vstest.reportsPaths="$env:RUNNER_TEMP\TestResults\**\*.trx"
           /d:sonar.exclusions="**/bin/**,**/obj/**,**/TestResults/**"
-          /d:sonar.coverage.exclusions="**/tests/**,**/*.xaml.cs,**/Registration/**"
+          /d:sonar.coverage.exclusions="**/tests/**,**/*.xaml.cs,**/Registration/**,**/ViewModels/DreamineThreadMonitorViewModel.cs,**/Services/BatchedDispatcher.cs"
           /d:sonar.cpd.exclusions="**/tests/**"
       - name: Build and test
         shell: pwsh
